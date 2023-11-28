@@ -1,5 +1,6 @@
 spotify_million_playlist_dataset
 data
+*.db
 test
 train
 old
