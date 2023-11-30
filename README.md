@@ -8,7 +8,7 @@ Our recommendation engine takes a different approach, allowing listeners to gene
 
 # Data Processing
 
-The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge) (or MPD for short) is a publicly available compilation of 1 million playlists created by Spotify users. It consists of 1,000 json files, each containing 1,000 playlists. A playlist consists of metadata (e.g. a unique playlist id, name, number of followers, number of tracks, etc.) and a list of tracks with their respetive metadata (e.g. name, artist, album, etc.). Given that a track usually appears in multiple playlists, we created a SQL database to avoid storing redundant metadata. This is our schema:
+The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge) (or MPD for short) is a publicly available compilation of 1 million playlists created by Spotify users. It consists of 1,000 json files, each containing 1,000 playlists. A playlist consists of metadata (e.g. a unique playlist id, name, number of followers, number of tracks, etc.) and a list of tracks with their respetive metadata (e.g. name, artist, album, etc.). Given that a track usually appears in multiple playlists, we created a SQL database to avoid storing redundant metadata and to improve processing times when training and subsequently using our models. The original MPD requires 5.8 GB of storage when compressed in a zip folder, and is 33.5 GB when uncompressed, whereas our SQL database uses only 1.6 GB of storage, making it a more efficient means of storing and interacting with the dataset. This is our schema:
 
 ```markdown
 | PLAYLISTS           | PAIRINGS | TRACKS      |
@@ -33,7 +33,7 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 
 Our recommendation engine begins by generating a seed playlist from a text input by the user. This seed playlist is then filtered by the user, and fed into the matrix factorization model to generate a longer playlist of similar songs. We construct the seed playlist using a semantic search algorithm, which allows flexibility in the way a user interacts with the engine. Specfically the seed playlist is constructed using the following vector search algorithim:
 
-First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector, using cosine similarity as our metric. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from aforementioned pool of songs. 
+First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector, using cosine similarity as our metric. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from the aforementioned pool of songs. 
 
 
 
@@ -46,4 +46,4 @@ First we assign a vector to each playlist in the database by passing its title t
 
 
 # Future directions
-
+We plan to deploy this model on an AWS cloud server so that we can collect information from user interaction and feedback with the recommendation engine to further improve our model. Additional layers can also be added to improve recommendations, including adding weights for tracks appearing in playlists that have a high number of followers and incorporating the [MuSe (Musical Sentiment) database](https://www.kaggle.com/datasets/cakiki/muse-the-musical-sentiment-dataset) to further refine recommendations for specific moods or emotions.
