@@ -25,7 +25,7 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 | Duration            |          |             |
 ```
 
-**Measure of success:** Storing the MPD requires 5.8 GB when compressed in a .zip folder and 33.5 GB when uncompressed. Our SQL database uses only 1.6 GB.
+**Note:** (<- is there a better word?) Storing the MPD requires 5.8 GB when compressed in a .zip folder and 33.5 GB when uncompressed. Our SQL database uses only 1.6 GB.
 
 
 
