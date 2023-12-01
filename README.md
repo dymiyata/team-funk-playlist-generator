@@ -25,8 +25,9 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 | Duration            |          |             |
 ```
 
-**Note:** (<- is there a better word?) Storing the MPD requires 5.8 GB when compressed in a .zip folder and 33.5 GB when uncompressed. Our SQL database uses only 1.6 GB.
+# Overview of Pipeline
 
+![Pipeline](https://github.com/dymiyata/erdos2023_million_playlist_challenge/assets/142643458/2d02e942-a471-4a0f-90dc-05cdfea1c8af)
 
 
 # Semantic Search
