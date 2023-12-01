@@ -51,23 +51,26 @@ R_{\text{playlist},\text{track}} =
 \end{cases}
 $$
 
-Then if we have matrices $P$ and $Q$ so that $PQ \approx R$ we can treat the seed playlist as an "unfinished row" in the matrix $R$, and use the matrices $P$ and $Q$ to complete it.
+Then if we have matrices $P$ and $Q$ so that $PQ^T \approx R$ we can treat the seed playlist as an "unfinished row" in the matrix $R$, and use the matrices $P$ and $Q$ to complete it.
 
 
 We found the matrices $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch. This a machine learning algorithm whose prominent hyper-parameter is the number of "latent features", which we will denote by $f$. This hyper-parameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matrices $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively. The loss function for this algorithm is given by the squared error
 
 $$
-SE = \sum_{R_{i,j}= 1} (1- PQ_{i,j})^2.
+SE = \sum_{R_{i,j}= 1} (1- P_iQ_j^T)^2.
 $$
 
 Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the values. 
 
 
 
-say something about determining $f$...... 
+We split our data into a 70/15/15 train-test-validation split. We used cross validation to select the hyper-parameter $f = 20$. The value of the error function on the test set 0.03512.
 
 
-One downside of this MF recommender is that it is very liberal with recommendations. To refine the recommendations we use a cosine similarity filter to choose the songs the recommended songs that best fit our seed........
+# Cosine Similarity Filter
+
+The output of the MF model is 1000 recommended songs and a $f$-dimensional vectors for each song. To refine these results we compute the cosine similarity of each of these songs with our seed tracks. We then select the 50 tracks from the 1000 initial tracks with the best cosine similarity score.  
+ 
 
 
 # GUI
