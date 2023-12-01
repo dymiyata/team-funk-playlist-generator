@@ -41,7 +41,15 @@ First we assign a vector to each playlist in the database by passing its title t
 
 # Matrix Factorization Model
 
-With the playlist seed in hand, we use a collabrative filtering algorithm to recomend songs simialr to those in the seed. Specifically we implemented a version of a matrix factorization (MF) algorithm called Funk SVD from scratch. The defining feature of MF algorithims is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use MPD data set to assemble a matrix, $R$, whose rows and collumns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, $$R_{\text{playlist},\text{track}} = \begin{cases} 1 & \text{track is in playlist}\\ 0 & \text{otherwise}.  \end{cases}$$
+With the playlist seed in hand, we use a collabrative filtering algorithm to recomend songs simialr to those in the seed. Specifically we implemented a version of a matrix factorization (MF) algorithm called Funk SVD from scratch. The defining feature of MF algorithims is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use MPD data set to assemble a matrix, $R$, whose rows and collumns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is,
+
+$$
+R_{\text{playlist},\text{track}} =
+\begin{cases}
+1 & \text{track is in playlist} \\
+0 & \text{otherwise}.
+\end{cases}
+$$
 
 We then 
 
