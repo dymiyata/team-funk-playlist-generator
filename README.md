@@ -42,18 +42,24 @@ First we assign a vector to each playlist in the database by passing its title t
 # Matrix Factorization Model
 
 As the MPD contains no song metadata such as genre, we use a form of collaborative filtering called matrix factorization (MF) to recommend songs similar to those in the seed. The defining feature of MF algorithms is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use our data set to assemble a matrix, $R$, whose rows and columns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, 
-$$R_{\text{playlist},\text{track}} = 
+
+$$
+R_{\text{playlist},\text{track}} = 
 \begin{cases} 
 1 & \text{track is in playlist}\\
 0 & \text{otherwise}.  
-\end{cases}$$
+\end{cases}
+$$
+
 Then if we have matrices $P$ and $Q$ so that $PQ \approx R$ we can treat the seed playlist as an "unfinished row" in the matrix $R$, and use the matrices $P$ and $Q$ to complete it.
 
 
-We found the matrices $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch. This a machine learning algorithm whose prominent hyper-parameter is the number of "latent features", which we will denote by $f$. This hyper-parameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matrices $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively. The loss function for this algorithm is given by the mean squared error
+We found the matrices $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch. This a machine learning algorithm whose prominent hyper-parameter is the number of "latent features", which we will denote by $f$. This hyper-parameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matrices $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively. The loss function for this algorithm is given by the squared error
+
 $$
-MSE = \sum_{R_{i,j}= 1} (1- PQ_{i,j})^2.
+SE = \sum_{R_{i,j}= 1} (1- PQ_{i,j})^2.
 $$
+
 Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the values. 
 
 
