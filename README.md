@@ -27,7 +27,8 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 
 # Overview of Pipeline
 
-![Pipeline](https://github.com/dymiyata/erdos2023_million_playlist_challenge/assets/142643458/2d02e942-a471-4a0f-90dc-05cdfea1c8af)
+![Pipeline](https://github.com/dymiyata/erdos2023_million_playlist_challenge/assets/142643458/ebfa8df3-10d3-4527-9f3f-c856caec74d3)
+
 
 
 # Semantic Search
