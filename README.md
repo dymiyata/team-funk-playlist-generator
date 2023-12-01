@@ -8,7 +8,7 @@ Our recommendation engine takes a different approach, allowing listeners to gene
 
 # Data Processing
 
-The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge) (or MPD for short) is a publicly available compilation of 1 million playlists created by Spotify users. It consists of 1,000 json files, each containing 1,000 playlists. A playlist consists of metadata (e.g. a unique playlist id, name, number of followers, number of tracks, etc.) and a list of tracks with their respetive metadata (e.g. name, artist, album, etc.). Given that a track usually appears in multiple playlists, we created a SQL database to avoid storing redundant metadata and to improve processing times when training and subsequently using our models. The original MPD requires 5.8 GB of storage when compressed in a zip folder, and is 33.5 GB when uncompressed, whereas our SQL database uses only 1.6 GB of storage, making it a more efficient means of storing and interacting with the dataset. This is our schema:
+The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge) (or MPD for short) is a publicly available compilation of 1 million playlists created by Spotify users. It consists of 1,000 json files, each containing 1,000 playlists. A playlist consists of metadata (e.g. a unique playlist id, name, number of followers, number of tracks, etc.) and a list of tracks with their respective metadata (e.g. name, artist, album, etc.). Given that a track usually appears in multiple playlists, we created a SQL database to avoid storing redundant metadata and to improve processing times when training and subsequently using our models. The original MPD requires 5.8 GB of storage when compressed in a zip folder, and is 33.5 GB when uncompressed, whereas our SQL database uses only 1.6 GB of storage, making it a more efficient means of storing and interacting with the dataset. This is our schema:
 
 ```markdown
 | PLAYLISTS           | PAIRINGS | TRACKS      |
@@ -33,18 +33,27 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 
 # Semantic Search
 
-Our recommendation engine begins by generating a seed playlist from a text input by the user. This seed playlist is then filtered by the user, and fed into the matrix factorization model to generate a longer playlist of similar songs. We construct the seed playlist using a semantic search algorithm, which allows flexibility in the way a user interacts with the engine. Specfically the seed playlist is constructed using the following vector search algorithim:
+Our recommendation engine begins by generating a seed playlist from a text input by the user. This seed playlist is then filtered by the user, and fed into the matrix factorization model to generate a longer playlist of similar songs. We construct the seed playlist using a semantic search algorithm, which allows flexibility in the way a user interacts with the engine. Specifically the seed playlist is constructed using the following vector search algorithm:
 
-First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). This assignmemt of a vector to each playlist is such that titles with simialr meaning are closer together with respect to the cosine similarity metric. The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from the aforementioned pool of songs. 
+First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). This assignment of a vector to each playlist is such that titles with similar meaning are closer together with respect to the cosine similarity metric. The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from the aforementioned pool of songs. 
 
 
 
 # Matrix Factorization Model
 
-With the playlist seed in hand, we use a collabrative filtering algorithm to recomend songs simialr to those in the seed. Specifically we implemented a version of a matrix factorization (MF) algorithm called Funk SVD from scratch. The defining feature of MF algorithims is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use MPD data set to assemble a matrix, $  R $, whose rows and collumns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, $$ 
-R_{\text{playlist},\text{track}} = \begin{cases} 1 & \text{track is in playlist}\\ 0 & \text{otherwise}.  \end{cases}$$
+As the MPD contains no song metadata such as genre, we use a form of collaborative filtering called matrix factorization (MF) to recommend songs similar to those in the seed. The defining feature of MF algorithms is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use our data set to assemble a matrix, $R$, whose rows and columns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, 
 
-We then 
+$$
+R_{\text{playlist},\text{track}} = 
+\begin{cases} 
+1 & \text{track is in playlist}\\
+0 & \text{otherwise}.  
+\end{cases}
+$$
+Then if we have matrices $P$ and $Q$ so that $PQ \approx R$ we can treat the seed playlist as an "unfinished row" in the matrix $R$, and use the matrices $P$ and $Q$ to complete it.
+
+
+We found the matricies $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch. This a machine learning algorithm whose prominent hyperparameter is the number of "latent features", which we will denote by $f$. This hyperparameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matricies $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively. 
 
 # GUI
 
