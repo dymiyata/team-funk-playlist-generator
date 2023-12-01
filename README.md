@@ -60,11 +60,11 @@ $$
 SE = \sum_{R_{i,j}= 1} (1- P_iQ_j^T)^2.
 $$
 
-Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the values. 
-
-
+Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the values.
 
 We split our data into a 70/15/15 train-test-validation split. We used cross validation to select the hyper-parameter $f = 20$. The value of the error function on the test set 0.03512.
+
+**Note:** Due to time constraints, the reported MSE was computed only on 10,000 out of the 150,000 playlists available in the test set. The computation of the $P$ matrix corresponding to the full test set was taking too much time.
 
 
 # Cosine Similarity Filter
