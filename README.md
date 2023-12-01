@@ -35,13 +35,16 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 
 Our recommendation engine begins by generating a seed playlist from a text input by the user. This seed playlist is then filtered by the user, and fed into the matrix factorization model to generate a longer playlist of similar songs. We construct the seed playlist using a semantic search algorithm, which allows flexibility in the way a user interacts with the engine. Specfically the seed playlist is constructed using the following vector search algorithim:
 
-First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector, using cosine similarity as our metric. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from the aforementioned pool of songs. 
+First we assign a vector to each playlist in the database by passing its title to the pre-trained NLP model [SBERT](https://www.sbert.net/) (using model='all-MiniLM-L6-v2' ). This assignmemt of a vector to each playlist is such that titles with simialr meaning are closer together with respect to the cosine similarity metric. The user's input is then vectorized using the same model. From here we wish to find the playlist vectors which are nearest to the user's input vector. As our database is large, we use the approximate nearest neighbors algorithm [ANNOY](https://github.com/spotify/annoy) to quickly find the playlists whose titles are most semantically similar to the user's input. With these playlists in hand we rank their corresponding pool of songs by how many nearby playlists it occurs in. The seed playlist is then created as the top n tracks from the aforementioned pool of songs. 
 
 
 
-# Matrix Factorization Training
+# Matrix Factorization Model
 
+With the playlist seed in hand, we use a collabrative filtering algorithm to recomend songs simialr to those in the seed. Specifically we implemented a version of a matrix factorization (MF) algorithm called Funk SVD from scratch. The defining feature of MF algorithims is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use MPD data set to assemble a matrix, $  R $, whose rows and collumns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, $$ 
+R_{\text{playlist},\text{track}} = \begin{cases} 1 & \text{track is in playlist}\\ 0 & \text{otherwise}.  \end{cases}$$
 
+We then 
 
 # GUI
 
