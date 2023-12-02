@@ -87,7 +87,7 @@ To test how well our model performs we repeat this operation on our test set, bu
 <!--- The computation of the $P$ matrix corresponding to the full test set was taking too much time. --->
 
 
-# Cosine Similarity Filter
+## Cosine Similarity Filter
 
 The output of the MF model is 1000 recommended songs and a $f$-dimensional vectors for each song. To refine these results we then compute the cosine similarity of each of these songs with our seed tracks. Finally, we select the 50 tracks from the 1000 initial tracks with the best cosine similarity score.  
  
@@ -95,7 +95,30 @@ The output of the MF model is 1000 recommended songs and a $f$-dimensional vecto
 
 # GUI
 
+In order to interact with our playlist generation engine, we build a simple graphical user interface. At first the user sees the window shown below:
+
+<p align="center">
+ <img src="https://github.com/dymiyata/team-funk-playlist-generator/assets/48339284/03e7fa13-a68a-47a8-a856-b0cdc51a7092" width="500" >
+</p>
+
+Since the MF portion of our engine requires a partial playlist, the user must first determine the seed tracks used to generate the full playlist. To do so, the user has two options. They can search for specific tracks if they have some in mind by clicking the button labeled "Find Specific Track". Otherwise, they can take advantage of the semantic search portion of our pipline to auto-generate recommended seed tracks by pressing the button labeled "Get Recommended Seeds from Phrase". Pressing this button will open a second window shown below.
+<p align="center">
+<img src="https://github.com/dymiyata/team-funk-playlist-generator/assets/48339284/78f72656-d4c1-4872-9d34-771a5ae07a2f" width="500" >
+</p>
+Here, the user is prompted to enter any phrase in order to generated recommended seed tracks from that phrase. Once they enter a phrase, they can press "Generate Recommended Seeds".  Below is an example showing the seeds generated for the phrase "90s rock party".
+<p align="center">
+<img src="https://github.com/dymiyata/team-funk-playlist-generator/assets/48339284/27430beb-8cb3-4e3c-b6bc-fd2a5a316278" width="500" >
+</p>
+Once the top 10 recommended seeds are generated, the user can select any number of these recommendations to add to their seed list on the original window.  If the user doesn't like the options presented, they can press "Regenerate" to get the next 10 top recommended seeds from our semantic search model. Below, we show what the original window looks like once some seed tracks are added.  
+<p align="center">
+<img src="https://github.com/dymiyata/team-funk-playlist-generator/assets/48339284/381e298a-bf18-42bb-855c-75aaa62f3472" width="500" >
+</p>
+From here the user can generate their full 50 song playlist by pressing the "Generate Playlist from Seeds" button. A new window is then opened with the full list of songs in the newly generated playlist.  The playlist generated from the seed tracks above is shown in the image below. 
+<p align="center">
+<img src="https://github.com/dymiyata/team-funk-playlist-generator/assets/48339284/1e7cf0d5-fe91-40e3-a60c-c4bbb10b2cb0" width="400" >
+</p>
+Here only 30 of the 50 tracks are shown, but the user can scroll to see the full playlist. In this window, the user can remove any tracks they do not want and once satisfied, they can save their playlist. 
 
 
 # Future directions
-We plan to deploy this model on an AWS cloud server so that we can collect information from user interaction and feedback with the recommendation engine to further improve our model. Additional layers can also be added to improve recommendations, including adding weights for tracks appearing in playlists that have a high number of followers and incorporating the [MuSe (Musical Sentiment) database](https://www.kaggle.com/datasets/cakiki/muse-the-musical-sentiment-dataset) to further refine recommendations for specific moods or emotions.
+We plan to deploy this model on an AWS cloud server so that we can collect information from user interaction and feedback with the recommendation engine to further improve our model. Additional layers can also be added to improve recommendations, including adding weights for tracks appearing in playlists that have a high number of followers and incorporating the [MuSe (Musical Sentiment) database](https://www.kaggle.com/datasets/cakiki/muse-the-musical-sentiment-dataset) to further refine recommendations for specific moods or emotions. Finally, we would like to connect our model to the APIs of the most popular streaming platforms in order for users to access their generated playlists wherever they listen to music.
