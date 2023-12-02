@@ -41,7 +41,7 @@ First we assign a vector to each playlist in the database by passing its title t
 
 
 
-# Matrix Factorization Model
+# Matrix Factorization Model (Funk SVD)
 
 As the MPD contains no song metadata such as genre, we use a form of collaborative filtering called matrix factorization (MF) to recommend songs similar to those in the seed. The defining feature of MF algorithms is that they assemble data into a large matrix which is then approximated by a product of two smaller matrices. In our case we use our data set to assemble a matrix, $R$, whose rows and columns correspond to playlists and tracks respectively, and whose entries consist of a 1 if the track is in the playlist and a zero otherwise. That is, 
 
@@ -53,20 +53,38 @@ R_{\text{playlist},\text{track}} =
 \end{cases}
 $$
 
-Then if we have matrices $P$ and $Q$ so that $PQ^T \approx R$ we can treat the seed playlist as an "unfinished row" in the matrix $R$, and use the matrices $P$ and $Q$ to complete it.
+Just because a track is not in a playlist, doesn't mean that it shouldn't belong there. For instance, the creator of the playlist may not be aware of the certain track that they would have added to their playlist had they heard the track. To this end, the key idea is to treat the zeros in $R$ as missing values that we wish to fill in with other values to get a final matrix $R_{pred}$.  If an entry of $R_{pred}$ is close to 1 then our model will recommend the corresponding track to add to the that playlist. 
 
+To predict these missing values we wish to find smaller matrices $P$ (corresponding to playlists) and $Q$ (corresponding to tracks) so that the product $PQ^T$ matches the matrix $R$ on the entries equal to 1. Once we have such matrices $P$ and $Q$ we set:
 
-We found the matrices $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch. This a machine learning algorithm whose prominent hyper-parameter is the number of "latent features", which we will denote by $f$. This hyper-parameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matrices $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively. The loss function for this algorithm is given by the squared error
+$$
+R_{pred} = PQ^T.
+$$
+
+We found $P$ and $Q$ by implementing a MF algorithm called Funk SVD from scratch which learns $P$ and $Q$ using gradient descent. The prominent hyper-parameter in Funk SVD is the number of "latent features", which we will denote by $f$. This hyper-parameter determines the size of $P$ and $Q$. That is, as $R$ is a $|\text{playlists}| \times |\text{tracks}|$ matrix, the matrices $P$ and $Q$ will have dimension $|\text{playlists}| \times f$ and $f \times |\text{tracks}|$ respectively.  The rows of $P$ are $f$-dimensional vectors, one for each playlists and the rows of $Q$ are $f$-dimensional vectors, one for each track. Since we want $PQ^T$ to match $R$ on the entries equal to 1, our loss function for this algorithm is given by the squared error
 
 $$
 SE = \sum_{R_{i,j}= 1} (1- P_iQ_j^T)^2.
 $$
 
-Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the values.
+Beginning with random values for $P$ and $Q$ we use gradient descent with an $L_2$ regularization term to update the entries of $P$ and $Q$.  
 
-We split our data into a 70/15/15 train-test-validation split. We used cross validation to select the hyper-parameter $f = 20$. The value of the error function on the test set 0.03512.
+Once $P$ and $Q$ have been learned, the next question is how do we recommend songs to a partial playlist $x$ that is not in our dataset? To do this, we treat the matrix $Q$ as fixed and find the vector $p_{x}$ that minimizes the squared error
 
-**Note:** Due to time constraints, the reported MSE was computed only on 10,000 out of the 150,000 playlists available in the test set. The computation of the $P$ matrix corresponding to the full test set was taking too much time.
+$$
+SE_{x} = \sum_{i} (1- p_x Q_i^T)^2
+$$
+
+where the sum is taken over indices $i$ corresponding to tracks in the partial playlist $x$.  Since $Q$ is fixed, the vector $p_x$ that minimizes $SE_{x}$ is convex and can be computed directly.  Then, to recommend tracks to add to playlist $x$, we simply find the tracks with index $i$ where $p_xQ_i^T \approx 1$ 
+
+## Choosing values of our hyperparameters
+
+We split our data into a 70/15/15 train-test-validation split in order to choose the values of our hyperparameters, most notably $f$. For each playlist $x$ in our validation set, we find $p_{x}$ as described above and use the sum of squared errors $\sum_{x} SE_{x}$ as the error on our validation set. We found that selecting $f = 20$ minimized this error on the validation set. 
+
+To test how well our model performs we repeat this operation on our test set, but use Mean Squared Error (MSE) rather than SE. We found a MSE of 0.03512 on our test set.
+
+**Note:** Due to time constraints, the reported MSE was computed only on 10,000 out of the 150,000 playlists available in the test set. 
+<!--- The computation of the $P$ matrix corresponding to the full test set was taking too much time. --->
 
 
 # Cosine Similarity Filter
