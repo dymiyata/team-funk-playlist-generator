@@ -75,7 +75,7 @@ $$
 SE_{x} = \sum_{i} (1- p_x Q_i^T)^2
 $$
 
-where the sum is taken over indices $i$ corresponding to tracks in the partial playlist $x$.  Since $Q$ is fixed, the vector $p_x$ that minimizes $SE_{x}$ is convex and can be computed directly.  Then, to recommend tracks to add to playlist $x$, we simply find the tracks with index $i$ where $p_xQ_i^T \approx 1$ 
+where the sum is taken over indices $i$ corresponding to tracks in the partial playlist $x$.  Since $Q$ is fixed, $SE_{x}$ treated as a function depending on $p_x$ is convex. Thus, the vector $p_x$ that minimizes $SE_{x}$ can be computed directly.  Then, to recommend tracks to add to playlist $x$, we simply find the tracks with index $i$ where $p_xQ_i^T \approx 1$ 
 
 ## Choosing values of our hyperparameters
 
@@ -89,7 +89,7 @@ To test how well our model performs we repeat this operation on our test set, bu
 
 # Cosine Similarity Filter
 
-The output of the MF model is 1000 recommended songs and a $f$-dimensional vectors for each song. To refine these results we compute the cosine similarity of each of these songs with our seed tracks. We then select the 50 tracks from the 1000 initial tracks with the best cosine similarity score.  
+The output of the MF model is 1000 recommended songs and a $f$-dimensional vectors for each song. To refine these results we then compute the cosine similarity of each of these songs with our seed tracks. Finally, we select the 50 tracks from the 1000 initial tracks with the best cosine similarity score.  
  
 
 
