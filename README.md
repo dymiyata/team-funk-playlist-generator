@@ -77,7 +77,7 @@ $$
 
 where the sum is taken over indices $i$ corresponding to tracks in the partial playlist $x$.  Since $Q$ is fixed, $SE_{x}$ treated as a function depending on $p_x$ is convex. Thus, the vector $p_x$ that minimizes $SE_{x}$ can be computed directly.  Then, to recommend tracks to add to playlist $x$, we simply find the tracks with index $i$ where $p_xQ_i^T \approx 1$ 
 
-## Choosing values of our hyperparameters
+## Choosing Values for Hyperparameters
 
 We split our data into a 70/15/15 train-test-validation split in order to choose the values of our hyperparameters, most notably $f$. For each playlist $x$ in our validation set, we find $p_{x}$ as described above and use the sum of squared errors $\sum_{x} SE_{x}$ as the error on our validation set. We found that selecting $f = 20$ minimized this error on the validation set. 
 
@@ -93,7 +93,7 @@ The output of the MF model is 1000 recommended songs and a $f$-dimensional vecto
  
 
 
-# GUI
+# Demonstration of Playlist Generation
 
 In order to interact with our playlist generation engine, we build a simple graphical user interface. At first the user sees the window shown below:
 
