@@ -28,7 +28,7 @@ The [Million Playlist Dataset](https://www.aicrowd.com/challenges/spotify-millio
 # Overview of Pipeline
 
 
-![Untitled presentation (2)](https://github.com/dymiyata/team-funk-playlist-generator/assets/142643458/58037c82-31d0-4015-aab0-c9437beb3329)
+![Pipeline)](https://github.com/dymiyata/team-funk-playlist-generator/assets/142643458/58037c82-31d0-4015-aab0-c9437beb3329)
 
 
 
